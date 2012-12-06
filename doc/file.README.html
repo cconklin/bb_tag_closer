@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.3
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>BBTagCloser</h1>
+
+<p>Automatically detects and closes bb_tags (the ones in forums) in the opposite order that they were added.</p>
+
+<p>&quot;[u]My Underlined Text&quot; becomes &quot;[u]My Underlined Text[/u]&quot;</p>
+
+<h2>Installation</h2>
+
+<p>This gem requires Rails 3.2 or later, it was developed and tested on Rails 3.2.9</p>
+
+<p>Add this line to your application&#39;s Gemfile:</p>
+
+<pre class="code ruby"><code><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>bb_tag_closer</span><span class='tstring_end'>'</span></span>
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre class="code ruby"><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre class="code ruby"><code>$ gem install bb_tag_closer
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>To use on a model, call close_tags. This will automatically close bb_tags on text (not string) attributes of the model. If you wish to manually specify which attributes to close bb_tags on, call close_tags_for like so:</p>
+
+<p>close_tags_for :attribute1, attribute2, :on =&gt; # callback you wish to close tags on, accepts validation, create, update, and save (is save by default)</p>
+
+<p>If the attributes are protected by mass_assignment using the :as option such as attr_accessible :my_attribute, :as =&gt; :my_permission; use close_tags or close_tags_for :attribute1, :mass_assignment_keys =&gt; :my_permission or close_tags_for :attribute1, :mass_assignment_keys =&gt; [:my_permission1, :my_permission2]</p>
+
+<p>BBTagCloser closes [b], [i], [u], [s], [quote], [url], [img], [email], [youtube], [size], and [color] tags by default, each is able to accept additional parameters such as [quote=foo]#...[/quote]
+  To manually set the tags, call the following in an initializer file:</p>
+
+<p>BBTagCloser.configure { |config| config.bb_tags = [&quot;u&quot;, &quot;b&quot;, &quot;s&quot;, &quot;i&quot;, &quot;quote&quot;, &quot;url&quot;, &quot;img&quot;, &quot;email&quot;, &quot;youtube&quot;, &quot;size&quot;, &quot;color&quot;, # More tags here] }</p>
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am &#39;Added some feature&#39;</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+</div></div>
+
+    <div id="footer">
+  Generated on Wed Dec  5 22:27:56 2012 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.3 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>
