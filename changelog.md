@@ -2,6 +2,7 @@
 
 Initial Release
 
-## Version 1.0.1 ##
+## Version 1.0.2 ##
 
 Added ability to disable tag closing callback by specifying :no_callback => true
+Now with documentation.
