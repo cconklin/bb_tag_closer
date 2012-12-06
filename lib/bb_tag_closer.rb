@@ -15,7 +15,7 @@ module BBTagCloser
   module ClassMethods
 
     # ActiveRecord text attributes are considered taggable by default.
-    # Using close_tags_for overrides default attributes with custom attributes.
+    # Using auto_close_bb_tags_for overrides default attributes with custom attributes.
 
     def taggable_fields
       columns.map {|c| {c.name.to_sym => c.type}}.delete_if {|i| not i.value? :text}.map(&:keys).flatten
@@ -29,7 +29,7 @@ module BBTagCloser
     # If custom mass_assignment is used such as attr_accessible :foo, :as => :bar
     # pass :mass_assignment_keys => :bar or :mass_assignment_keys => [:bar, :baz].
     
-    def close_tags(options = {})
+    def auto_close_bb_tags(options = {})
       unless options[:no_callback]
         target = options[:on] ? "before_#{options[:on]}" : "before_save"
         send(target, :close_tags)
@@ -40,9 +40,9 @@ module BBTagCloser
       end
     end
 
-    # Specify which attributes to close tags on. Accepts the same options as close_tags.
+    # Specify which attributes to close tags on. Accepts the same options as auto_close_bb_tags.
 
-    def close_tags_for(*args)
+    def auto_close_bb_tags_for(*args)
       options = args.last.is_a?(Hash) ? args.pop : {}
       unless options[:no_callback]
         target = options[:on] ? "before_#{options[:on]}" : "before_save"
@@ -66,13 +66,13 @@ module BBTagCloser
 
   # Called during a callback specified in the :on paramater in close_tags or close_tags_for. Closes forum tags in the opposite order they were added by the user.
 
-  def close_tags
+  def close_bb_tags
     text_attributes = self.class.taggable_fields
     text_attributes.each do |attribute|
-      tags = Configuration.bb_tags && send(attribute).scan(Regexp.new "\\[(.*?)\\]").flatten.delete_if {|c| c.include? "/"}.map {|i| i.include?("=") ? i.slice(Regexp.new "(.*)\\=").chomp("=") : i}.reverse
+      tags = send(attribute).scan(Regexp.new "\\[(.*?)\\]").flatten.delete_if {|c| c.include? "/"}.map {|i| i.include?("=") ? i.slice(Regexp.new "(.*)\\=").chomp("=") : i}.reverse.map(&:downcase).delete_if { |x| not Configuration.bb_tags.include? x } 
       tags.each do |tag|
-        open_tags = send(attribute).scan(Regexp.new "\\[#{tag}=").length + send(attribute).scan(Regexp.new "\\[#{tag}\\]").length
-        closed_tags = send(attribute).scan(Regexp.new "\\[\\/#{tag}\\]").length
+        open_tags = send(attribute).downcase.scan(Regexp.new "\\[#{tag}=").length + send(attribute).downcase.scan(Regexp.new "\\[#{tag}\\]").length
+        closed_tags = send(attribute).downcase.scan(Regexp.new "\\[\\/#{tag}\\]").length
         difference = open_tags - closed_tags
         if open_tags > closed_tags
           send(attribute) << "[/#{tag}]"
