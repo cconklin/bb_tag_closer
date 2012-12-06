@@ -14,34 +14,40 @@ module BBTagCloser
 
   module ClassMethods
 
-    # Text attributes are considered taggable by default
-    # Using close_tags_for overrides default with custom attributes
+    # ActiveRecord text attributes are considered taggable by default.
+    # Using close_tags_for overrides default attributes with custom attributes.
 
     def taggable_fields
       columns.map {|c| {c.name.to_sym => c.type}}.delete_if {|i| not i.value? :text}.map(&:keys).flatten
     end
 
     # Closes tags on text attributes.
-    # Closes tags before save by default, but can be overridden by passing :on
-    # the :on paramater accepts :save, :create, :update, :validation 
+    # Closes tags before save by default, but can be overridden by passing :on;
+    # the :on paramater accepts :save, :create, :update, :validation.
+    # Alternatively, pass :no_callback => true to prevent tags from being closed automatically
+    # (you will have to close them in the controller).
     # If custom mass_assignment is used such as attr_accessible :foo, :as => :bar
-    # pass :mass_assignment_keys => :bar or :mass_assignment_keys => [:bar, :baz]
-
+    # pass :mass_assignment_keys => :bar or :mass_assignment_keys => [:bar, :baz].
+    
     def close_tags(options = {})
-      target = options[:on] ? "before_#{options[:on]}" : "before_save"
-      send(target, :close_tags)
+      unless options[:no_callback]
+        target = options[:on] ? "before_#{options[:on]}" : "before_save"
+        send(target, :close_tags)
+      end
       mass_assignment_keys = Array options[:mass_assignment_keys]
       mass_assignment_keys.each do |key|
         attr_accessible :font_size, :font_color, :as => key
       end
     end
 
-    # Specify which attributes to close tags on. Accepts the same options as close_tags
+    # Specify which attributes to close tags on. Accepts the same options as close_tags.
 
     def close_tags_for(*args)
       options = args.last.is_a?(Hash) ? args.pop : {}
-      target = options[:on] ? "before_#{options[:on]}" : "before_save"
-      send(target, :close_tags)
+      unless options[:no_callback]
+        target = options[:on] ? "before_#{options[:on]}" : "before_save"
+        send(target, :close_tags)
+      end
       self.singleton_class.class_eval do
         define_method :taggable_fields do
           args.delete_if {|i| not i.is_a? Symbol}
@@ -51,10 +57,14 @@ module BBTagCloser
 
   end
 
+  # Sets configuration options. Currently supports setting of custom bb_tags through BBTagCloser.configure 
+  # {|config| config.bb_tags = ["u", "b", "s", "i", "quote", "url", "img", "email", "youtube", "size", "color", # additional tags ]}
+
   def self.configure(&block)
     yield BBTagCloser::Configuration
   end
 
+  # Called during a callback specified in the :on paramater in close_tags or close_tags_for. Closes forum tags in the opposite order they were added by the user.
 
   def close_tags
     text_attributes = self.class.taggable_fields
