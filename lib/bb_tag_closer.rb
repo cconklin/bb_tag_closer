@@ -31,7 +31,7 @@ module BBTagCloser
     
     def auto_close_bb_tags(options = {})
       unless options[:no_callback]
-        target = options[:on] ? "before_#{options[:on]}" : "before_save"
+        target = [:create, :update, :validation].include?(options[:on]) ? "before_#{options[:on]}" : "before_save"
         send(target, :close_tags)
       end
       mass_assignment_keys = Array options[:mass_assignment_keys]
@@ -43,17 +43,14 @@ module BBTagCloser
     # Specify which attributes to close tags on. Accepts the same options as auto_close_bb_tags.
 
     def auto_close_bb_tags_for(*args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      unless options[:no_callback]
-        target = options[:on] ? "before_#{options[:on]}" : "before_save"
-        send(target, :close_tags)
-      end
+      options = args.extract_options!
+      auto_close_bb_tags(options)
       self.singleton_class.class_eval do
         define_method :taggable_fields do
           args.delete_if {|i| not i.is_a? Symbol}
         end
       end
-    end   
+    end
 
   end
 

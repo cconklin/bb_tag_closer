@@ -2,7 +2,7 @@ require "spec_helper"
 class Post < ActiveRecord::Base
   include BBTagCloser
   attr_accessor :body
-  auto_close_bb_tags_for :body
+  auto_close_bb_tags_for :body, :on => :create
   
   def initialize
     @body = ""

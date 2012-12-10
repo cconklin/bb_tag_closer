@@ -8,6 +8,7 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{Allows the customization of tags in an initializer file, and can work with multiple attributes of a model, specified in the close_tags_for method.}
   gem.homepage      = ""
   gem.add_development_dependency "rspec"
+  gem.add_development_dependency "debugger"
   gem.add_development_dependency 'rails', '>= 3.2'
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
