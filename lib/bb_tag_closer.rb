@@ -32,7 +32,7 @@ module BBTagCloser
     def auto_close_bb_tags(options = {})
       unless options[:no_callback]
         target = [:create, :update, :validation].include?(options[:on]) ? "before_#{options[:on]}" : "before_save"
-        send(target, :close_tags)
+        send(target, :close_bb_tags)
       end
       mass_assignment_keys = Array options[:mass_assignment_keys]
       mass_assignment_keys.each do |key|
